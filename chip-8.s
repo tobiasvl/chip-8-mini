@@ -768,6 +768,95 @@ opcodeE:
 	jmp MainLoop
 
 opcodeF:
+	mov a, l
+	xor a, $33
+	jz opcodeFX33
+
+	mov a, l
+	xor a, $55
+	jz opcodeFX55
+
+	mov a, l
+	xor a, $65
+	jz opcodeFX65
+
+	jmp MainLoop
+
+opcodeFX33:
+	mov b, h
+	and b, $0F
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov l, [hl]
+	mov h, 0
+
+	mov x, [C8_I]
+
+	push hl
+	mov a, 100
+	div hl, a
+	mov [x], l
+
+	inc x
+
+	pop hl
+	push hl
+	mov a, 10
+	div hl, a
+	mov h, 0
+	div hl, a
+	mov [x], h
+
+	inc x
+
+	pop hl
+	mov a, 100
+	div hl, a
+	mov a, 10
+	mov l, h
+	mov h, 0
+	div hl, a
+	mov [x], h
+
+	jmp MainLoop
+
+opcodeFX55:
+	mov b, h
+	and b, $0F
+	inc b
+
+	mov hl, C8_V
+	mov x, [C8_I]
+
+_storeLoop:
+	mov [x], [hl]
+	inc x
+	inc hl
+	jdbnz _storeLoop
+
+	;mov [C8_I], x
+
+	jmp MainLoop
+
+opcodeFX65:
+	mov b, h
+	and b, $0F
+	inc b
+
+	mov hl, C8_V
+	mov x, [C8_I]
+
+_storeLoop:
+	mov [hl], [x]
+	inc x
+	inc hl
+	jdbnz _storeLoop
+
+	;mov [C8_I], x
+
 	jmp MainLoop
 
 ;-----------------------------------------------------------------------------
