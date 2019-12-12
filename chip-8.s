@@ -146,6 +146,26 @@ MainLoop:
 
 	mov a, h
 	and a, $F0
+	xor a, $20
+	jz opcode2
+
+	mov a, h
+	and a, $F0
+	xor a, $30
+	jz opcode3
+
+	mov a, h
+	and a, $F0
+	xor a, $40
+	jz opcode4
+
+	mov a, h
+	and a, $F0
+	xor a, $50
+	jz opcode5
+
+	mov a, h
+	and a, $F0
 	xor a, $60
 	jz opcode6
 
@@ -156,15 +176,45 @@ MainLoop:
 
 	mov a, h
 	and a, $F0
+	xor a, $80
+	jz opcode8
+
+	mov a, h
+	and a, $F0
+	xor a, $90
+	jz opcode9
+
+	mov a, h
+	and a, $F0
 	xor a, $A0
 	jz opcodeA
+
+	mov a, h
+	and a, $F0
+	xor a, $B0
+	jz opcodeB
+
+	mov a, h
+	and a, $F0
+	xor a, $C0
+	jz opcodeC
 
 	mov a, h
 	and a, $F0
 	xor a, $D0
 	jz opcodeD
 
-	jmp		MainLoop
+	mov a, h
+	and a, $F0
+	xor a, $E0
+	jz opcodeE
+
+	mov a, h
+	and a, $F0
+	xor a, $F0
+	jz opcodeF
+
+	;jmp		MainLoop
 
 opcode0:
 	mov a, l
@@ -188,6 +238,92 @@ opcode1:
 	mov [C8_PC], hl
 	jmp MainLoop
 
+opcode2:
+	jmp MainLoop
+
+opcode3:
+	mov b, 0
+	mov a, l
+	mov n, a
+	mov a, h
+	and a, $0F
+	mov hl, C8_V
+	add hl, ba
+	mov a, n
+	cmp a, [hl]
+	jnz _notEqual
+
+	mov x, C8_PC
+	mov hl, [x]
+	inc hl
+	inc hl
+	mov [x], hl
+
+_notEqual:
+	jmp MainLoop
+
+opcode4:
+	mov b, 0
+	mov a, l
+	mov n, a
+	mov a, h
+	and a, $0F
+	mov hl, C8_V
+	add hl, ba
+	mov a, n
+	cmp a, [hl]
+	jz _equal
+
+	mov x, C8_PC
+	mov hl, [x]
+	inc hl
+	inc hl
+	mov [x], hl
+
+_equal:
+	jmp MainLoop
+
+opcode5:
+	xchg ba, hl
+	and b, $0F
+	tst a, $0F
+	jnz MainLoop
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	pop hl
+
+	cmp a, b
+	jnz _notEqual
+
+	mov x, C8_PC
+	mov hl, [x]
+	inc hl
+	inc hl
+	mov [x], hl
+
+_notEqual:
+	jmp MainLoop
+
 opcode6:
 	mov b, 0
 	mov a, l
@@ -199,7 +335,6 @@ opcode6:
 	mov a, n
 	mov [hl], a
 	jmp MainLoop
-
 
 opcode7:
 	mov b, 0
@@ -213,10 +348,60 @@ opcode7:
 	add [hl], a
 	jmp MainLoop
 
+opcode8:
+	jmp MainLoop
+
+opcode9:
+	xchg ba, hl
+	and b, $0F
+	tst a, $0F
+	jnz MainLoop
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	pop hl
+
+	cmp a, b
+	jz _equal
+
+	mov x, C8_PC
+	mov hl, [x]
+	inc hl
+	inc hl
+	mov [x], hl
+
+_equal:
+	jmp MainLoop
+
 opcodeA:
 	and h, $0F
 	add hl, C8_OFFSET
 	mov [C8_I], hl
+	jmp MainLoop
+
+opcodeB:
+	jmp MainLoop
+
+opcodeC:
 	jmp MainLoop
 
 opcodeD:
@@ -224,15 +409,11 @@ opcodeD:
 	call CopySpriteToScreen
 	jmp MainLoop
 
-Sprite:
-	.db 0b00011000
-	.db 0b00111100
-	.db 0b01111110
-	.db 0b11111111
-	.db 0b00011000
-	.db 0b00011000
-	.db 0b00011000
-	.db 0b00011000
+opcodeE:
+	jmp MainLoop
+
+opcodeF:
+	jmp MainLoop
 
 ;-----------------------------------------------------------------------------
 ; Delay
@@ -509,7 +690,7 @@ font8x8:
 	.incbin font8x8.bin
 
 gameROM:
-	.incbin IBM
+	.incbin test_opcode.ch8
 endGameROM:
 
 ;-----------------------------------------------------------------------------
