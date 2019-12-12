@@ -112,6 +112,7 @@ USER_BEGIN:
 	.equ C8_ST		$133D
 
 	.equ C8_V		$1340	; V0–VF
+	.equ C8_VF		C8_V + $F
 	
 	.equ C8_SP		$1350	; 1 byte offset for stack
 	.equ C8_STACK	$1351	; TODO maybe 16 levels instead?
@@ -349,6 +350,360 @@ opcode7:
 	jmp MainLoop
 
 opcode8:
+	mov a, l
+	tst a, $0F
+	jz opcode8XY0
+
+	and a, $0F
+	mov b, a
+	
+	xor a, $01
+	jz opcode8XY1
+
+	mov a, b
+	xor a, $02
+	jz opcode8XY2
+
+	mov a, b
+	xor a, $03
+	jz opcode8XY3
+	
+	mov a, b
+	xor a, $04
+	jz opcode8XY4
+	
+	mov a, b
+	xor a, $05
+	jz opcode8XY5
+
+	mov a, b
+	xor a, $06
+	jz opcode8XY6
+	
+	mov a, b
+	xor a, $07
+	jz opcode8XY7
+	
+	mov a, b
+	xor a, $0E
+	jz opcode8XYE
+
+	jmp MainLoop
+
+opcode8XY0:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	pop a
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XY1:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	or a, b
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XY2:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	and a, b
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XY3:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	xor a, b
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XY4:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	add a, b
+	mov [hl], a
+
+	mov hl, C8_VF
+	mov a, f
+	shr a
+	and a, $01
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XY5:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	xchg a, b
+	sub a, b
+	mov [hl], a
+
+	mov hl, C8_VF
+	mov a, f
+	shr a
+	and a, $01
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XY6:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	shr a
+	mov [hl], a
+
+	mov hl, C8_VF
+	mov a, f
+	shr a
+	and a, $01
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XY7:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	sub a, b
+	mov [hl], a
+
+	mov hl, C8_VF
+	mov a, f
+	shr a
+	and a, $01
+	mov [hl], a
+
+	pop hl
+
+	jmp MainLoop
+
+opcode8XYE:
+	mov ba, hl
+	and b, $0F
+	swap a
+	and a, $0F
+
+	push b
+
+	mov hl, C8_V
+	mov b, l
+	add a, b
+	mov l, a
+	mov a, [hl]
+
+	pop b
+	push hl
+	push a
+
+	mov hl, C8_V
+	mov a, l
+	add a, b
+	mov l, a
+	mov b, [hl]
+
+	pop a
+	shl a
+	mov [hl], a
+
+	mov hl, C8_VF
+	mov a, f
+	shr a
+	and a, $01
+	mov [hl], a
+
+	pop hl
+
 	jmp MainLoop
 
 opcode9:
@@ -629,6 +984,9 @@ loop_done:
 
 CopySpriteToScreen:
 
+	mov y, C8_VF
+	mov [y], 0
+
 	; here:
 	; x = sprite
 	; hl = DXYN
@@ -666,7 +1024,12 @@ CopySpriteToScreen:
 _memCopyLoop2:
 	mov a, [x]
 	and a, [hl]
-	; TODO store VF
+	jz _noCollision
+
+	mov y, C8_VF
+	mov [y], 1
+
+_noCollision:
 	xor [hl], [x] ; TODO xor
 	inc hl
 	inc x
