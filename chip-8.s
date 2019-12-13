@@ -586,6 +586,7 @@ opcode8XY5:
 	mov a, f
 	shr a
 	and a, $01
+	xor a, $01
 	mov [hl], a
 
 	pop hl
@@ -595,20 +596,20 @@ opcode8XY5:
 opcode8XY6:
 	mov ba, hl
 	and b, $0F
-	swap a
-	and a, $0F
+	;swap a
+	;and a, $0F
 
-	push b
+	;push b
 
-	mov hl, C8_V
-	mov b, l
-	add a, b
-	mov l, a
-	mov a, [hl]
+	;mov hl, C8_V
+	;mov b, l
+	;add a, b
+	;mov l, a
+	;mov a, [hl]
 
-	pop b
-	push hl
-	push a
+	;pop b
+	;push hl
+	;push a
 
 	mov hl, C8_V
 	mov a, l
@@ -616,9 +617,12 @@ opcode8XY6:
 	mov l, a
 	mov b, [hl]
 
-	pop a
-	shr a
-	mov [hl], a
+	;pop a
+	;shl a
+	;mov [hl], a
+
+	shr b
+	mov [hl], b
 
 	mov hl, C8_VF
 	mov a, f
@@ -626,7 +630,7 @@ opcode8XY6:
 	and a, $01
 	mov [hl], a
 
-	pop hl
+	;pop hl
 
 	jmp MainLoop
 
@@ -662,6 +666,7 @@ opcode8XY7:
 	mov a, f
 	shr a
 	and a, $01
+	xor a, $01
 	mov [hl], a
 
 	pop hl
@@ -671,20 +676,20 @@ opcode8XY7:
 opcode8XYE:
 	mov ba, hl
 	and b, $0F
-	swap a
-	and a, $0F
+	;swap a
+	;and a, $0F
 
-	push b
+	;push b
 
-	mov hl, C8_V
-	mov b, l
-	add a, b
-	mov l, a
-	mov a, [hl]
+	;mov hl, C8_V
+	;mov b, l
+	;add a, b
+	;mov l, a
+	;mov a, [hl]
 
-	pop b
-	push hl
-	push a
+	;pop b
+	;push hl
+	;push a
 
 	mov hl, C8_V
 	mov a, l
@@ -692,9 +697,12 @@ opcode8XYE:
 	mov l, a
 	mov b, [hl]
 
-	pop a
-	shl a
-	mov [hl], a
+	;pop a
+	;shl a
+	;mov [hl], a
+
+	shl b
+	mov [hl], b
 
 	mov hl, C8_VF
 	mov a, f
@@ -702,7 +710,7 @@ opcode8XYE:
 	and a, $01
 	mov [hl], a
 
-	pop hl
+	;pop hl
 
 	jmp MainLoop
 
@@ -769,6 +777,14 @@ opcodeE:
 
 opcodeF:
 	mov a, l
+	xor a, $1E
+	jz opcodeFX1E
+
+	mov a, l
+	xor a, $29
+	jz opcodeFX29
+
+	mov a, l
 	xor a, $33
 	jz opcodeFX33
 
@@ -780,6 +796,33 @@ opcodeF:
 	xor a, $65
 	jz opcodeFX65
 
+	jmp MainLoop
+
+opcodeFX1E:
+	mov b, 0
+	mov a, h
+	and a, $0F
+	mov hl, C8_V
+	add hl, ba
+
+	mov a, [hl]
+	mov hl, C8_I
+	add [hl], a
+	jmp MainLoop
+
+opcodeFX29:
+	mov b, 0
+	mov a, h
+	and a, $0F
+	mov hl, C8_V
+	add hl, ba
+
+	mov a, [hl]
+	mov l, 5
+	mul l, a
+	add hl, font
+	mov x, C8_I
+	mov [x], hl
 	jmp MainLoop
 
 opcodeFX33:
@@ -1104,7 +1147,7 @@ CopySpriteToScreen:
 	mov l, a
 	mov a, h
 	add a, $10
-	mov h, a
+	mov h, a	
 
 	;memCopy
 	mov b, 8
@@ -1142,8 +1185,26 @@ font8x8:
 	.incbin font8x8.bin
 
 gameROM:
-	.incbin test_opcode.ch8
+	.incbin BC_test.ch8 ;test_opcode.ch8
 endGameROM:
+
+font:
+	.db    0xF0, 0x90, 0x90, 0x90, 0xF0
+    .db    0x20, 0x60, 0x20, 0x20, 0x70
+    .db    0xF0, 0x10, 0xF0, 0x80, 0xF0
+    .db    0xF0, 0x10, 0xF0, 0x10, 0xF0
+    .db    0x90, 0x90, 0xF0, 0x10, 0x10
+    .db    0xF0, 0x80, 0xF0, 0x10, 0xF0
+    .db    0xF0, 0x80, 0xF0, 0x90, 0xF0
+    .db    0xF0, 0x10, 0x20, 0x40, 0x40
+    .db    0xF0, 0x90, 0xF0, 0x90, 0xF0
+    .db    0xF0, 0x90, 0xF0, 0x10, 0xF0
+    .db    0xF0, 0x90, 0xF0, 0x90, 0x90
+    .db    0xE0, 0x90, 0xE0, 0x90, 0xE0
+    .db    0xF0, 0x80, 0x80, 0x80, 0xF0
+    .db    0xE0, 0x90, 0x90, 0x90, 0xE0
+    .db    0xF0, 0x80, 0xF0, 0x80, 0xF0
+    .db    0xF0, 0x80, 0xF0, 0x80, 0x80 
 
 ;-----------------------------------------------------------------------------
 ; End
